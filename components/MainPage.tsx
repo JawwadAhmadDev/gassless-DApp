@@ -1,6 +1,6 @@
-import GaslessDeposit from "./Deposit";
-import GaslessTransfer from "./Transfer";
-import GaslessWithdraw from "./Withdraw";
+import GaslessDeposit from "./Deposit/Deposit";
+import GaslessTransfer from "./Transfer/Transfer";
+import GaslessWithdraw from "./Withdraw/Withdraw";
 
  
 export default function MainPage() {
