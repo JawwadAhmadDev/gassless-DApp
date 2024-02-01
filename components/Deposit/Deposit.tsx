@@ -6,7 +6,7 @@ import { getAccount, readContract } from '@wagmi/core'
 import { type ReadContractReturnType } from '@wagmi/core'
 import { config } from '@/config/wagmi';
 import { parseEther } from 'viem'
-import { contractData, abi } from '@/contracts/ERC20Permit/contract';
+import { abi } from '@/contracts/ERC20Permit/contract';
 
 
 
@@ -55,8 +55,8 @@ const GaslessDeposit: React.FC = () => {
             deadline: deadline 
         }
 
-        // // Logic to create signature
-        createPermitSignature(permitData); 
+        const {r, s, v, sig} = await createPermitSignature(permitData);
+        
         setIsSignatureCreated(true);
     };
 

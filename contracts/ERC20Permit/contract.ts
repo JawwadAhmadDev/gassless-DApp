@@ -1,8 +1,3 @@
-export const contractData = {
-  mumbai: "0x18d7987fd1eebd66e6a5741b5883c488a648c67f",
-  georli: "",
-};
-
 export const abi = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   { inputs: [], name: "ECDSAInvalidSignature", type: "error" },
