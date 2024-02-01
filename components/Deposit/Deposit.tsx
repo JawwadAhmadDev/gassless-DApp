@@ -2,9 +2,12 @@
 import { createPermitSignature } from '@/utils/createPermitSig';
 import { useAccount } from 'wagmi';
 import React, { useState } from 'react';
-import { getAccount } from '@wagmi/core'
+import { getAccount, readContract } from '@wagmi/core'
+import { type ReadContractReturnType } from '@wagmi/core'
 import { config } from '@/config/wagmi';
 import { parseEther } from 'viem'
+import { contractData, abi } from '@/contracts/ERC20Permit/contract';
+
 
 
 // types
@@ -23,28 +26,37 @@ const GaslessDeposit: React.FC = () => {
     const [tokens, setTokens] = useState<number>(0);
     const [isSignatureCreated, setIsSignatureCreated] = useState<boolean>(false);
     const [spenderAddress, setSpenderAddress] = useState<string>('');
-    const [contractAddress, setContractAddress] = useState<string>('');
-
+    const [ERC20PermitAddress, setERC20PermitAddress] = useState<string>('');
+    
     const account = useAccount();
-    const currentAccount = getAccount(config)
+    const currentAccount = getAccount(config);
+    const deadline = 2661766724;
+  
 
 
-    const handleCreateSignature = () => {
-        const nonces = 0; // get from contract function nonce(address)
+    const handleCreateSignature = async () => {
 
+        // getting nonce
+        const nonces: ReadContractReturnType  = await readContract(config, {
+            abi,
+            address: ERC20PermitAddress,
+            functionName: 'nonces',
+            args: [currentAccount.address], 
+          });
+         
         const permitData: PermitData = {
             currentAccount: currentAccount.address,
             domainName: "MyToken",
             chainId: account.chainId,
-            contractAddress: contractAddress,
+            contractAddress: ERC20PermitAddress,
             spenderAddress: spenderAddress,
             tokensAmount: Number(parseEther(String(tokens))),
-            nonce: nonces,
-            deadline: 2661766724 // set hardly
+            nonce: Number(nonces),
+            deadline: deadline 
         }
 
-        // Logic to create signature
-        createPermitSignature(permitData) 
+        // // Logic to create signature
+        createPermitSignature(permitData); 
         setIsSignatureCreated(true);
     };
 
@@ -59,8 +71,8 @@ const GaslessDeposit: React.FC = () => {
             
             <input 
                 type="text" 
-                value={contractAddress}
-                onChange={(e) => setContractAddress(e.target.value)}
+                value={ERC20PermitAddress}
+                onChange={(e) => setERC20PermitAddress(e.target.value)}
                 className="mb-4 px-3 py-2 w-1/3 border border-gray-300 text-slate-900 rounded-md"
                 placeholder="Token Address"
             />
