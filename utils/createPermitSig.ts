@@ -1,6 +1,7 @@
 import { PermitData } from "@/components/Deposit/Deposit";
 import { signTypedData } from "@wagmi/core";
 import { config } from "@/config/wagmi";
+import { type SignTypedDataParameters } from "@wagmi/core";
 
 export const createPermitSignature = async (permitData: PermitData) => {
   const domainName = permitData.domainName; // put your token name
@@ -64,7 +65,10 @@ export const createPermitSignature = async (permitData: PermitData) => {
       message: permit,
     };
 
-    const signature = await signTypedData(config, dataToSign);
+    const signature = await signTypedData(
+      config,
+      dataToSign as SignTypedDataParameters
+    );
 
     const split = splitSig(signature);
 

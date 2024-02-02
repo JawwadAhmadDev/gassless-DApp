@@ -1,6 +1,7 @@
 import { signTypedData } from "@wagmi/core";
 import { config } from "@/config/wagmi";
 import { CreateWithdrawSigData } from "@/components/Withdraw/Withdraw";
+import { type SignTypedDataParameters } from "@wagmi/core";
 
 export const createWithdrawSignature = async (
   createWithdrawSigData: CreateWithdrawSigData
@@ -79,7 +80,10 @@ export const createWithdrawSignature = async (
     message: message,
   };
 
-  const signature = await signTypedData(config, dataToSign);
+  const signature = await signTypedData(
+    config,
+    dataToSign as SignTypedDataParameters
+  );
 
   // const split = splitSig(signature);
 
