@@ -2,7 +2,6 @@ import GaslessDeposit from "./Deposit/Deposit";
 import GaslessTransfer from "./Transfer/Transfer";
 import GaslessWithdraw from "./Withdraw/Withdraw";
 
- 
 export default function MainPage() {
   return (
     <div className="flex flex-col items-center justify-center p-8 mt-5">
@@ -11,9 +10,9 @@ export default function MainPage() {
         <GaslessDeposit />
       </div>
       <div className="flex flex-row justify-center items-center gap-x-1 w-full">
-        <GaslessTransfer />
+        {/* <GaslessTransfer /> */}
         <GaslessWithdraw />
       </div>
     </div>
-  )
+  );
 }
