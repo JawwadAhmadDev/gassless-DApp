@@ -2,11 +2,13 @@
 import { createPermitSignature } from '@/utils/createPermitSig';
 import { useAccount } from 'wagmi';
 import React, { useState } from 'react';
-import { getAccount, readContract } from '@wagmi/core'
+import { getAccount, readContract, writeContract } from '@wagmi/core'
 import { type ReadContractReturnType } from '@wagmi/core'
 import { config } from '@/config/wagmi';
 import { parseEther } from 'viem'
 import { abi } from '@/contracts/ERC20Permit/contract';
+import { uToken_ABI, contract } from '@/contracts/uTokenFactory/contract';
+import { toast } from 'react-hot-toast';
 
 
 
@@ -22,11 +24,32 @@ export type PermitData = {
     deadline: number
 }
 
+export type DepositData = {
+    uTokenAddress: string,
+    owner: string,
+    // spender: string,
+    amount: number,
+    deadline: number,
+    v: number,
+    r: string,
+    s: string
+}
+
 const GaslessDeposit: React.FC = () => {
     const [tokens, setTokens] = useState<number>(0);
     const [isSignatureCreated, setIsSignatureCreated] = useState<boolean>(false);
     const [spenderAddress, setSpenderAddress] = useState<string>('');
     const [ERC20PermitAddress, setERC20PermitAddress] = useState<string>('');
+    const [depositData, setDepositData] = useState<DepositData>({
+        uTokenAddress: '',
+        owner: '',
+        // spender: '',
+        amount: 0,
+        deadline: 2661766724,
+        v: 0,
+        r: '',
+        s: ''
+    });
     
     const account = useAccount();
     const currentAccount = getAccount(config);
@@ -37,32 +60,73 @@ const GaslessDeposit: React.FC = () => {
     const handleCreateSignature = async () => {
 
         // getting nonce
-        const nonces: ReadContractReturnType  = await readContract(config, {
-            abi,
-            address: ERC20PermitAddress,
-            functionName: 'nonces',
-            args: [currentAccount.address], 
-          });
-         
-        const permitData: PermitData = {
-            currentAccount: currentAccount.address,
-            domainName: "MyToken",
-            chainId: account.chainId,
-            contractAddress: ERC20PermitAddress,
-            spenderAddress: spenderAddress,
-            tokensAmount: Number(parseEther(String(tokens))),
-            nonce: Number(nonces),
-            deadline: deadline 
-        }
+        try {
+            const nonces: ReadContractReturnType  = await readContract(config, {
+                abi,
+                address: ERC20PermitAddress,
+                functionName: 'nonces',
+                args: [currentAccount.address], 
+              });
+            
+            // getting uToken address of ERC20 Permit Token
+            const uTokenAddress: ReadContractReturnType = await readContract(config, {
+                abi: uToken_ABI,
+                address: account.chainId === 5 ? contract.goerli : contract.mumbai,
+                functionName: 'get_uTokenAddressOfToken',
+                args: [ERC20PermitAddress], 
+            });
+             
+            // preparing data to call createPermit function
+            const permitData: PermitData = {
+                currentAccount: currentAccount.address,
+                domainName: "MyToken",
+                chainId: account.chainId,
+                contractAddress: ERC20PermitAddress,
+                spenderAddress: spenderAddress,
+                tokensAmount: Number(parseEther(String(tokens))),
+                nonce: Number(nonces),
+                deadline: deadline 
+            }
+    
+            const {r, s, v, sig} = await createPermitSignature(permitData);
+    
+            setDepositData({...depositData, 
+                uTokenAddress: uTokenAddress,
+                owner: currentAccount.address as string, 
+                // spender: spenderAddress,
+                amount:  Number(parseEther(String(tokens))),
+                deadline: deadline,
+                v: v, r: r, s: s
+            });
 
-        const {r, s, v, sig} = await createPermitSignature(permitData);
-        
-        setIsSignatureCreated(true);
+            toast.success("Signature created");
+            
+            setIsSignatureCreated(true);
+        } catch (error) {
+            toast.error(`Error while signature creations ${error}`);
+            console.log(error);
+        }
     };
 
-    const handleDeposit = () => {
+
+    const handleDeposit = async() => {
         // Logic for deposit
-        console.log(`Depositing ${tokens} tokens`);
+        try {
+            const result = await writeContract(config, {
+                abi: uToken_ABI, 
+                address: account.chainId === 5 ? contract.goerli : contract.mumbai,
+                functionName: 'depositWithPermit',
+                args: [
+                  depositData.uTokenAddress, depositData.owner, depositData.amount, depositData.deadline, depositData.v, depositData.r, depositData.s
+                ],
+              })
+            
+              toast.success("Deposited success.");
+              toast.success(`Transactions Hash: ${result}`);
+        } catch (error) {
+            toast.error(`Error while deposit with Permit ${error}`);
+            console.log(error);
+        }
     };
 
     return (
