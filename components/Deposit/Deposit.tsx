@@ -58,21 +58,23 @@ const GaslessDeposit: React.FC = () => {
     try {
       const nonces: ReadContractReturnType = await readContract(config, {
         abi,
-        address: ERC20PermitAddress,
+        address: ERC20PermitAddress as `0x${string}`,
         functionName: "nonces",
         args: [currentAccount.address],
       });
 
       const domainName: ReadContractReturnType = await readContract(config, {
         abi,
-        address: ERC20PermitAddress,
+        address: ERC20PermitAddress as `0x${string}`,
         functionName: "name",
       });
 
       // getting uToken address of ERC20 Permit Token
       const uTokenAddress: ReadContractReturnType = await readContract(config, {
         abi: uToken_ABI,
-        address: account.chainId === 5 ? contract.goerli : contract.mumbai,
+        address: (account.chainId === 5
+          ? contract.goerli
+          : contract.mumbai) as `0x${string}`,
         functionName: "get_uTokenAddressOfToken",
         args: [ERC20PermitAddress],
       });
@@ -80,7 +82,7 @@ const GaslessDeposit: React.FC = () => {
       // preparing data to call createPermit function
       const permitData: PermitData = {
         currentAccount: currentAccount.address,
-        domainName: domainName,
+        domainName: domainName as string,
         chainId: account.chainId,
         contractAddress: ERC20PermitAddress,
         spenderAddress: "0xf1193d8F237292CAf7c2C2f49e8600Db748D4FAb",
@@ -93,7 +95,7 @@ const GaslessDeposit: React.FC = () => {
 
       setDepositData({
         ...depositData,
-        uTokenAddress: uTokenAddress,
+        uTokenAddress: uTokenAddress as string,
         owner: currentAccount.address as string,
         // spender: spenderAddress,
         amount: Number(parseEther(String(tokens))),
@@ -117,7 +119,9 @@ const GaslessDeposit: React.FC = () => {
     try {
       const result = await writeContract(config, {
         abi: uToken_ABI,
-        address: account.chainId === 5 ? contract.goerli : contract.mumbai,
+        address: (account.chainId === 5
+          ? contract.goerli
+          : contract.mumbai) as `0x${string}`,
         functionName: "depositWithPermit",
         args: [
           depositData.uTokenAddress,

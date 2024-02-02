@@ -52,7 +52,9 @@ const GaslessWithdraw: React.FC = () => {
     try {
       const uTokenAddress: ReadContractReturnType = await readContract(config, {
         abi: uToken_ABI,
-        address: account.chainId === 5 ? contract.goerli : contract.mumbai,
+        address: (account.chainId === 5
+          ? contract.goerli
+          : contract.mumbai) as `0x${string}`,
         functionName: "get_uTokenAddressOfToken",
         args: [ERC20PermitAddress],
       });
@@ -72,7 +74,7 @@ const GaslessWithdraw: React.FC = () => {
 
       setWithdrawData({
         ...withdrawData,
-        uTokenAddress: uTokenAddress,
+        uTokenAddress: uTokenAddress as string,
         signer: currentAccount.address as string,
         amount: Number(parseEther(String(tokensAmount))),
         message: message,
@@ -90,7 +92,9 @@ const GaslessWithdraw: React.FC = () => {
     try {
       const result = await writeContract(config, {
         abi: uToken_ABI,
-        address: account.chainId === 5 ? contract.goerli : contract.mumbai,
+        address: (account.chainId === 5
+          ? contract.goerli
+          : contract.mumbai) as `0x${string}`,
         functionName: "withdrawWithPermit",
         args: [
           withdrawData.uTokenAddress,
