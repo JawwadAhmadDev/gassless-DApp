@@ -85,7 +85,9 @@ const GaslessDeposit: React.FC = () => {
         domainName: domainName as string,
         chainId: account.chainId,
         contractAddress: ERC20PermitAddress,
-        spenderAddress: "0xf1193d8F237292CAf7c2C2f49e8600Db748D4FAb",
+        spenderAddress: (account.chainId === 5
+          ? contract.goerli
+          : contract.mumbai) as `0x${string}`,
         tokensAmount: Number(parseEther(String(tokens))),
         nonce: Number(nonces),
         deadline: deadline,
@@ -117,6 +119,7 @@ const GaslessDeposit: React.FC = () => {
   const handleDeposit = async () => {
     // Logic for deposit
     try {
+      console.log(depositData);
       const result = await writeContract(config, {
         abi: uToken_ABI,
         address: (account.chainId === 5
@@ -135,7 +138,7 @@ const GaslessDeposit: React.FC = () => {
       });
 
       toast.success("Deposited success.");
-      toast.success(`Transactions Hash: ${result}`);
+      // toast.success(`Transactions Hash: ${result}`);
       setIsSignatureCreated(false);
     } catch (error) {
       toast.error(`Error while deposit with Permit ${error}`);

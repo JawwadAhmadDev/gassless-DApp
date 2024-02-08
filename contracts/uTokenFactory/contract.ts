@@ -1,5 +1,5 @@
 export const contract = {
-  goerli: "0xf1193d8F237292CAf7c2C2f49e8600Db748D4FAb",
+  goerli: "0x3c6661bEC25a9363F0d12D64057Ab0C368003fDd",
   mumbai: "",
 };
 
