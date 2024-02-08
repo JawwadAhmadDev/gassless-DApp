@@ -2,4 +2,4 @@ Link: https://gassless-da-n4kv1aspf-jawwadahmaddev.vercel.app/
 
 Georli:
 ERC20Permit (Goerli): 0xd5B504242B7eE737AA265339f4FbeCb948d9406D 
-uTokenFactory: 0x7f82f8e7E3bBBF952C4c34Fda5415f204F76D3fB [https://goerli.etherscan.io/address/0x7f82f8e7e3bbbf952c4c34fda5415f204f76d3fb#codee]
+uTokenFactory: 0xf1193d8F237292CAf7c2C2f49e8600Db748D4FAb [https://goerli.etherscan.io/address/0xf1193d8f237292caf7c2c2f49e8600db748d4fab#code]
