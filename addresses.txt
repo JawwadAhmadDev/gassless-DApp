@@ -1,4 +1,4 @@
-Link: https://gassless-da-n4kv1aspf-jawwadahmaddev.vercel.app/
+Link: https://65c457b8a6d4df2bf3d04f86--quiet-palmier-68a3bf.netlify.app/
 
 Georli:
 ERC20Permit (Goerli): 0xd5B504242B7eE737AA265339f4FbeCb948d9406D 
