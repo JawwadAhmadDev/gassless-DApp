@@ -1,6 +1,8 @@
+import { goerli, polygonMumbai, sepolia } from "viem/chains";
 import { http, createConfig } from "wagmi";
-import { sepolia, polygonMumbai, goerli } from "@wagmi/core/chains";
-import { injected } from "@wagmi/connectors";
+import { injected } from "wagmi/connectors";
+// import { sepolia, polygonMumbai, goerli } from "@wagmi/core/chains";
+// import { injected } from "@wagmi/connectors";
 
 // import { injected } from '@wagmi/connectors'
 
